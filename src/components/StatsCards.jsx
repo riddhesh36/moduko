@@ -1,17 +1,23 @@
 export default function StatsCards({ orders }) {
-    const today = new Date().toISOString().split('T')[0]
-
-    const todayOrders = orders.filter(o => o.delivery_date === today)
     const unpaidOrders = orders.filter(o => o.payment_status === 'unpaid')
     const pendingOrders = orders.filter(o => o.order_status === 'pending')
     const packedOrders = orders.filter(o => o.order_status === 'packed')
-    const totalBoxesToday = todayOrders.reduce((sum, o) => sum + o.quantity, 0)
+
+    const modakCounts = {
+        classic: 5,
+        delight: 7,
+        celebration: 11
+    }
+    const totalModaks = orders.reduce((sum, o) => {
+        const modaksPerBox = modakCounts[o.box_size] || 0
+        return sum + (o.quantity * modaksPerBox)
+    }, 0)
 
     const stats = [
         {
             icon: '📋',
-            value: todayOrders.length,
-            label: 'Orders Today',
+            value: orders.length,
+            label: 'Total Orders',
             color: 'var(--primary)'
         },
         {
@@ -28,8 +34,8 @@ export default function StatsCards({ orders }) {
         },
         {
             icon: <img src="/modak.png" alt="Modak" className="modak-icon" style={{ height: '0.9em' }} />,
-            value: totalBoxesToday,
-            label: 'Boxes to Prepare Today',
+            value: totalModaks,
+            label: 'Modak Count',
             color: 'var(--success)'
         }
     ]
