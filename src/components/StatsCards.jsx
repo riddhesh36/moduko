@@ -13,6 +13,16 @@ export default function StatsCards({ orders }) {
         return sum + (o.quantity * modaksPerBox)
     }, 0)
 
+    const boxCosts = {
+        classic: 120,
+        delight: 160,
+        celebration: 240
+    }
+    const totalExpectedRevenue = orders.reduce((sum, o) => {
+        const costPerBox = boxCosts[o.box_size] || 0
+        return sum + (o.quantity * costPerBox)
+    }, 0)
+
     const stats = [
         {
             icon: '📋',
@@ -37,11 +47,17 @@ export default function StatsCards({ orders }) {
             value: totalModaks,
             label: 'Modak Count',
             color: 'var(--success)'
+        },
+        {
+            icon: '₹',
+            value: `₹${totalExpectedRevenue}`,
+            label: 'Expected Revenue',
+            color: 'var(--primary)'
         }
     ]
 
     return (
-        <div className="stats-grid">
+        <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
             {stats.map((stat, idx) => (
                 <div key={idx} className="stat-card">
                     <div className="stat-icon">{stat.icon}</div>
