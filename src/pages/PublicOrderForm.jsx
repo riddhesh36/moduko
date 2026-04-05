@@ -54,7 +54,7 @@ export default function PublicOrderForm() {
     return (
         <div className="public-page-wrapper">
             <div className="public-header">
-                <h1><img src="/modak.png" alt="Modak" /> Modak Co.</h1>
+                <h1><img src="/modak.png" alt="Modak" /> Modak & Co</h1>
                 <p>Order fresh, beautifully crafted homemade modaks for your festive occasions. Simply select your box size and preferred delivery dates below.</p>
             </div>
 
