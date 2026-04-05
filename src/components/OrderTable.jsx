@@ -7,8 +7,6 @@ export default function OrderTable({ orders, onMarkPacked, onMarkDelivered, onMa
     const [filterPayment, setFilterPayment] = useState('')
     const [filterStatus, setFilterStatus] = useState('')
 
-    const today = new Date().toISOString().split('T')[0]
-
     const filteredOrders = useMemo(() => {
         return orders.filter(order => {
             // Search filter
@@ -36,17 +34,8 @@ export default function OrderTable({ orders, onMarkPacked, onMarkDelivered, onMa
     }, [orders, search, filterBoxSize, filterPayment, filterStatus])
 
     function getRowClass(order) {
-        if (order.delivery_date < today && order.order_status !== 'delivered') return 'row-overdue'
         if (order.payment_status === 'unpaid') return 'row-unpaid'
         return ''
-    }
-
-    function formatDate(dateStr) {
-        return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-        })
     }
 
     const boxEmoji = { classic: <img src="/modak.png" alt="Classic" className="modak-icon" />, delight: '🎁', celebration: '🎊' }
@@ -111,7 +100,7 @@ export default function OrderTable({ orders, onMarkPacked, onMarkDelivered, onMa
                                 <th>Phone</th>
                                 <th>Box Size</th>
                                 <th>Qty</th>
-                                <th>Delivery</th>
+                                <th>Delivery Slots</th>
                                 <th>Notes</th>
                                 <th>Payment</th>
                                 <th>Status</th>
@@ -129,7 +118,11 @@ export default function OrderTable({ orders, onMarkPacked, onMarkDelivered, onMa
                                         {boxEmoji[order.box_size]} {order.box_size}
                                     </td>
                                     <td data-label="Qty">{order.quantity}</td>
-                                    <td data-label="Delivery">{formatDate(order.delivery_date)}</td>
+                                    <td data-label="Delivery Slots">
+                                        {Array.isArray(order.delivery_slots) && order.delivery_slots.length > 0
+                                            ? order.delivery_slots.join(', ')
+                                            : 'None'}
+                                    </td>
                                     <td data-label="Notes">
                                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                                             {order.flavour_notes || '—'}
@@ -204,7 +197,7 @@ export default function OrderTable({ orders, onMarkPacked, onMarkDelivered, onMa
                     justifyContent: 'space-between'
                 }}>
                     <span>Showing {filteredOrders.length} of {orders.length} orders</span>
-                    <span>Sorted by delivery date</span>
+                    <span>Sorted by creation time</span>
                 </div>
             )}
         </div>

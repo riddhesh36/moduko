@@ -12,7 +12,7 @@ export function useOrders({ userId = null, roleFilter = null } = {}) {
             let query = supabase
                 .from('orders')
                 .select('*')
-                .order('delivery_date', { ascending: true })
+                .order('created_at', { ascending: false }) // Sort by created_at since slots are arrays
 
             // Accountant only sees their own orders
             if (roleFilter === 'accountant' && userId) {
@@ -21,7 +21,10 @@ export function useOrders({ userId = null, roleFilter = null } = {}) {
 
             const { data, error: fetchError } = await query
 
-            if (fetchError) throw fetchError
+            if (fetchError) {
+                alert(`Supabase fetch error: ${fetchError.message || JSON.stringify(fetchError)}`);
+                throw fetchError;
+            }
             setOrders(data || [])
         } catch (err) {
             console.error('Error fetching orders:', err)
@@ -46,9 +49,7 @@ export function useOrders({ userId = null, roleFilter = null } = {}) {
                 },
                 (payload) => {
                     if (payload.eventType === 'INSERT') {
-                        setOrders(prev => [...prev, payload.new].sort(
-                            (a, b) => new Date(a.delivery_date) - new Date(b.delivery_date)
-                        ))
+                        setOrders(prev => [payload.new, ...prev])
                     } else if (payload.eventType === 'UPDATE') {
                         setOrders(prev =>
                             prev.map(order =>
@@ -74,8 +75,6 @@ export function useOrders({ userId = null, roleFilter = null } = {}) {
         const { data, error } = await supabase
             .from('orders')
             .insert([orderData])
-            .select()
-            .single()
 
         if (error) throw error
         return data

@@ -9,6 +9,8 @@ import AccountantDashboard from './pages/AccountantDashboard'
 import OrderFormPage from './pages/OrderFormPage'
 import AccountantOrders from './pages/AccountantOrders'
 import AdminDashboard from './pages/AdminDashboard'
+import ManageSlots from './pages/ManageSlots'
+import PublicOrderForm from './pages/PublicOrderForm'
 import SetupGuide from './components/SetupGuide'
 
 function ProtectedRoute({ children, allowedRole }) {
@@ -81,6 +83,15 @@ function AppRoutes() {
                     }
                 />
 
+                <Route
+                    path="/accountant/slots"
+                    element={
+                        <ProtectedRoute allowedRole="accountant">
+                            <ManageSlots />
+                        </ProtectedRoute>
+                    }
+                />
+
                 {/* Admin Routes */}
                 <Route
                     path="/admin"
@@ -91,16 +102,10 @@ function AppRoutes() {
                     }
                 />
 
-                {/* Root redirect */}
+                {/* Root is now Public Order Form */}
                 <Route
                     path="/"
-                    element={
-                        user ? (
-                            <Navigate to={role === 'admin' ? '/admin' : '/accountant'} replace />
-                        ) : (
-                            <Navigate to="/login" replace />
-                        )
-                    }
+                    element={<PublicOrderForm />}
                 />
 
                 {/* Fallback */}

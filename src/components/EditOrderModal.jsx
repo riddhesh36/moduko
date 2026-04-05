@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import BoxSizePicker from './BoxSizePicker'
+import { useSlots } from '../hooks/useSlots'
 
 export default function EditOrderModal({ order, onSave, onClose, loading }) {
     const [form, setForm] = useState({
@@ -7,17 +8,34 @@ export default function EditOrderModal({ order, onSave, onClose, loading }) {
         phone_number: order.phone_number,
         box_size: order.box_size,
         quantity: order.quantity,
-        delivery_date: order.delivery_date,
+        delivery_slots: Array.isArray(order.delivery_slots) ? order.delivery_slots : [],
         flavour_notes: order.flavour_notes || '',
         payment_status: order.payment_status,
         order_status: order.order_status
     })
     const [errors, setErrors] = useState({})
+    const { activeSlots, loading: slotsLoading } = useSlots()
 
     function handleChange(e) {
         const { name, value } = e.target
         setForm(prev => ({ ...prev, [name]: value }))
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
+    }
+
+    function handleSlotToggle(slotName) {
+        setForm(prev => {
+            const isSelected = prev.delivery_slots.includes(slotName)
+            let newSlots
+            if (isSelected) {
+                newSlots = prev.delivery_slots.filter(s => s !== slotName)
+            } else {
+                newSlots = [...prev.delivery_slots, slotName]
+            }
+            if (errors.delivery_slots) {
+                setErrors(prevErrors => ({ ...prevErrors, delivery_slots: '' }))
+            }
+            return { ...prev, delivery_slots: newSlots }
+        })
     }
 
     function validate() {
@@ -30,7 +48,7 @@ export default function EditOrderModal({ order, onSave, onClose, loading }) {
         }
         if (!form.box_size) newErrors.box_size = 'Required'
         if (!form.quantity || form.quantity < 1) newErrors.quantity = 'Min 1'
-        if (!form.delivery_date) newErrors.delivery_date = 'Required'
+        if (form.delivery_slots.length === 0) newErrors.delivery_slots = 'Required'
         if (form.flavour_notes && form.flavour_notes.length > 300) {
             newErrors.flavour_notes = 'Max 300 characters'
         }
@@ -46,7 +64,7 @@ export default function EditOrderModal({ order, onSave, onClose, loading }) {
             phone_number: form.phone_number.trim(),
             box_size: form.box_size,
             quantity: parseInt(form.quantity, 10),
-            delivery_date: form.delivery_date,
+            delivery_slots: form.delivery_slots,
             flavour_notes: form.flavour_notes.trim() || null,
             payment_status: form.payment_status,
             order_status: form.order_status
@@ -114,15 +132,29 @@ export default function EditOrderModal({ order, onSave, onClose, loading }) {
                                 {errors.quantity && <div className="form-error">⚠ {errors.quantity}</div>}
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Delivery Date *</label>
-                                <input
-                                    name="delivery_date"
-                                    type="date"
-                                    className="form-input"
-                                    value={form.delivery_date}
-                                    onChange={handleChange}
-                                />
-                                {errors.delivery_date && <div className="form-error">⚠ {errors.delivery_date}</div>}
+                                <label className="form-label">Delivery Dates *</label>
+                                {slotsLoading ? (
+                                    <div style={{ padding: '0.5rem', color: 'var(--text-muted)' }}>Loading slots...</div>
+                                ) : activeSlots.length > 0 ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+                                        {activeSlots.map(slot => (
+                                            <label key={slot.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={form.delivery_slots.includes(slot.name)}
+                                                    onChange={() => handleSlotToggle(slot.name)}
+                                                    style={{ width: '1.2rem', height: '1.2rem' }}
+                                                />
+                                                <span>{slot.name}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div style={{ padding: '0.5rem', color: 'var(--error)' }}>
+                                        No active dates available.
+                                    </div>
+                                )}
+                                {errors.delivery_slots && <div className="form-error">⚠ {errors.delivery_slots}</div>}
                             </div>
                         </div>
 
@@ -168,7 +200,7 @@ export default function EditOrderModal({ order, onSave, onClose, loading }) {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>
-                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                        <button type="submit" className="btn btn-primary" disabled={loading || activeSlots.length === 0}>
                             {loading ? 'Saving...' : 'Save Changes'}
                         </button>
                     </div>

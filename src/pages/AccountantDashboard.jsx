@@ -6,8 +6,7 @@ export default function AccountantDashboard() {
     const { user } = useAuth()
     const { orders, loading } = useOrders({ userId: user?.id, roleFilter: 'accountant' })
 
-    const today = new Date().toISOString().split('T')[0]
-    const todayOrders = orders.filter(o => o.delivery_date === today)
+    const activeSlotsOrdered = orders.reduce((sum, o) => sum + (Array.isArray(o.delivery_slots) ? o.delivery_slots.length : 0), 0)
     const totalOrders = orders.length
 
     return (
@@ -17,7 +16,7 @@ export default function AccountantDashboard() {
                 <p>Ready to log some delicious modak orders today?</p>
             </div>
 
-            <div className="quick-actions">
+            <div className="quick-actions" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
                 <Link to="/accountant/new" className="quick-action-card" id="new-order-btn">
                     <div className="quick-action-icon">📝</div>
                     <div className="quick-action-text">
@@ -32,6 +31,13 @@ export default function AccountantDashboard() {
                         <p>View all orders you've entered</p>
                     </div>
                 </Link>
+                <Link to="/accountant/slots" className="quick-action-card" id="manage-slots-btn">
+                    <div className="quick-action-icon">📅</div>
+                    <div className="quick-action-text">
+                        <h3>Manage Slots</h3>
+                        <p>Configure available order dates</p>
+                    </div>
+                </Link>
             </div>
 
             <div className="stats-grid stats-grid-3">
@@ -42,8 +48,8 @@ export default function AccountantDashboard() {
                 </div>
                 <div className="stat-card">
                     <div className="stat-icon">📅</div>
-                    <div className="stat-value" style={{ color: '#1565C0' }}>{todayOrders.length}</div>
-                    <div className="stat-label">Today's Orders</div>
+                    <div className="stat-value" style={{ color: '#1565C0' }}>{activeSlotsOrdered}</div>
+                    <div className="stat-label">Order Slots Used</div>
                 </div>
                 <div className="stat-card">
                     <div className="stat-icon">📊</div>

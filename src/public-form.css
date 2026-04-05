@@ -1,0 +1,263 @@
+.public-page-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FFF8F0 0%, #faede1 50%, #ffffff 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+    font-family: var(--font-family);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Floating background elements for aesthetics */
+.public-page-wrapper::before,
+.public-page-wrapper::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(232, 93, 4, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.public-page-wrapper::before {
+    top: -150px;
+    left: -100px;
+}
+
+.public-page-wrapper::after {
+    bottom: -100px;
+    right: -150px;
+}
+
+.public-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    z-index: 1;
+    animation: fadeInDown 0.8s ease backwards;
+}
+
+.public-header h1 {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.public-header h1 img {
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.public-header p {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.public-form-container {
+    width: 100%;
+    max-width: 650px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03);
+    z-index: 1;
+    animation: fadeInUp 0.8s ease 0.15s backwards;
+}
+
+@media (max-width: 640px) {
+    .public-page-wrapper {
+        padding: 2rem 1rem;
+    }
+
+    .public-form-container {
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+    }
+
+    .public-header h1 {
+        font-size: 2.25rem;
+    }
+
+    .public-header p {
+        font-size: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Overrides when inside public container */
+.public-form-container .card {
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.public-form-container .form-input,
+.public-form-container .form-textarea {
+    background: #ffffff;
+    border: 1.5px solid #eae6e1;
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.public-form-container .form-input:focus,
+.public-form-container .form-textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(232, 93, 4, 0.12);
+    transform: translateY(-2px);
+}
+
+.public-form-container .form-label {
+    font-size: 0.85rem;
+    color: #4a4a5a;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.public-form-container .btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #ff7b00 100%);
+    border-radius: 16px;
+    padding: 1.15rem 2rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 10px 20px rgba(232, 93, 4, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-top: 1rem;
+}
+
+.public-form-container .btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(232, 93, 4, 0.35);
+}
+
+.public-form-container .btn-primary:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+}
+
+.slots-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Beautiful custom multi-select cards for slots */
+.slot-checkbox-label {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem 0.5rem;
+    min-height: 3.5rem;
+    border: 1.5px solid #eae6e1;
+    border-radius: 12px;
+    background: #faf9f7;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 600;
+    color: #7b7874;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.015);
+}
+
+.slot-checkbox-label:hover {
+    border-color: rgba(232, 93, 4, 0.3);
+    background: #FFF8F0;
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(232, 93, 4, 0.08);
+}
+
+.slot-checkbox-label.selected {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(232, 93, 4, 0.12);
+}
+
+/* Hide actual checkbox visually but keep accessible */
+.slot-checkbox-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Checkmark indicator for selected state */
+.slot-checkbox-label::after {
+    content: '✓';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 22px;
+    height: 22px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(232, 93, 4, 0.4);
+}
+
+.slot-checkbox-label.selected::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Success state styling */
+.public-success-card {
+    background: white;
+    border-radius: 28px;
+    padding: 4rem 2rem;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.5s ease backwards;
+}

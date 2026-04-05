@@ -37,20 +37,21 @@ export default function AccountantOrders() {
             ) : (
                 <div className="order-list">
                     {orders.map(order => (
-                        <div key={order.id} className="order-list-item">
-                            <div className="order-list-info">
-                                <div className="order-list-name">{order.customer_name}</div>
-                                <div className="order-list-meta">
-                                    <span>📞 {order.phone_number}</span>
-                                    <span>{boxEmoji[order.box_size]} {order.box_size} × {order.quantity}</span>
-                                    <span>📅 {formatDate(order.delivery_date)}</span>
-                                </div>
-                                {order.flavour_notes && (
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
-                                        💬 {order.flavour_notes}
-                                    </div>
-                                )}
+                        <div className="card order-card" key={order.id}>
+                            <div className="flex-between">
+                                <h3>{order.customer_name}</h3>
+                                <StatusBadge type="order" value={order.order_status} />
                             </div>
+                            <div className="order-details">
+                                <span>📞 {order.phone_number}</span>
+                                <span>📦 {order.quantity}x {order.box_size}</span>
+                                <span>📅 {Array.isArray(order.delivery_slots) && order.delivery_slots.length > 0 ? order.delivery_slots.join(', ') : 'None'}</span>
+                            </div>
+                            {order.flavour_notes && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+                                    💬 {order.flavour_notes}
+                                </div>
+                            )}
                             <div className="order-list-badges">
                                 <StatusBadge type="payment" value={order.payment_status} />
                                 <StatusBadge type="order" value={order.order_status} />
